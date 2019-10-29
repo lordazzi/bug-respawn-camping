@@ -1,0 +1,8 @@
+node_modules
+dist
+mass
+index.spec.ts
+coverage
+debug.log
+package
+tar
