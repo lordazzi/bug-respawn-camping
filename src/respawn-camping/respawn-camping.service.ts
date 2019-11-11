@@ -20,8 +20,10 @@ export class RespawnCampingService {
 
   registerRespawnedBug(normalizerName: string, error: ErrorNormalized): void {
     const registrable = this.createRegistrableError(normalizerName, error);
-    this.jiraApi
+    // this.jiraApi
   }
+
+
 
   private createRegistrableError(normalizerName: string, error: ErrorNormalized): ErrorToRegister {
     const clonedError = this.objectUtil.clone(error);

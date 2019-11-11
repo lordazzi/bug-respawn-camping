@@ -1,4 +1,3 @@
-import { EcmaModel } from '../common-types/ecma-model.type';
 import { HttpMethod } from './http-method.enum';
 
 export interface HttpRequestOptions {
@@ -7,8 +6,8 @@ export interface HttpRequestOptions {
   headers: {
     [header: string]: string
   } | null;
-  payload: EcmaModel | EcmaModel[] | null;
-  queryParams: {
+  payload?: Object | Object[] | null;
+  queryParams?: {
     [param: string]: string
   };
 }

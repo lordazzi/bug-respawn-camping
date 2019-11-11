@@ -19,7 +19,7 @@ export class HttpService {
     return HttpService.instance;
   }
 
-  request(options: HttpRequestOptions): Promise<EcmaModel> {
+  request(options: HttpRequestOptions): Promise<any> {
     const xhr = new XMLHttpRequest();
     xhr.open(options.method, options.server);
     this.setRequestHeaders(xhr, options.headers || {});
