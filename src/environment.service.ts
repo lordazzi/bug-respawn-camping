@@ -5,6 +5,43 @@ export class EnvironmentService {
   basicAuth: string | null = null;
   atlassianJiraServer: string | null = null;
   defaultProjectKey: string | null = null;
+  maxCommentsInIssue = 30;
+
+  waitTimeConfig: {
+    betweenEachInteractionOnTheSameIssue: number;
+    lowNetworkWhileUserIsActive: number;
+  } = {
+      /**
+       * Interact only one time with each issue in a time interval
+       */
+      betweenEachInteractionOnTheSameIssue: 7200000, // 2 * 20 * 20 * 1000, 2hrs
+
+      /**
+       * Stop interacting with Jira when user is active and haven't
+       * much network speed
+       */
+      lowNetworkWhileUserIsActive: 7200000, // 2 * 20 * 20 * 1000, 2hrs
+    };
+
+  stopInteractWhen: {
+    criticalDays: {
+      day: number;
+      month: number;
+    }[][];
+    maximumAmountOfIssuesReached: number | false;
+  } = {
+
+      /**
+       * Stop interacting with jira in critical day
+       */
+      criticalDays: [
+        [{ day: 25, month: 4 }, { day: 15, month: 5 }],
+        [{ day: 15, month: 11 }, { day: 1, month: 12 }],
+        [{ day: 15, month: 12 }, { day: 20, month: 1 }]
+      ],
+
+      maximumAmountOfIssuesReached: 30
+    };
 
   /**
    * Whether the project in which the issue is created is added to the

@@ -5,6 +5,7 @@ import { JiraCommentIssueRequest } from './jira-comment-issue-request.interface'
 import { JiraCommentIssueResponse } from './jira-comment-issue-response.interface';
 import { JiraCreateIssueRequest } from './jira-create-issue-request.interface';
 import { JiraCreateIssueResponse } from './jira-create-issue-response.interface';
+import { JiraGetIssueResponse } from './jira-get-issue-response.interface';
 import { JiraSearchIssueResponse } from './jira-search-issue-response.interface';
 export class JiraIntegrationApi {
 
@@ -42,12 +43,31 @@ export class JiraIntegrationApi {
     });
   }
 
-  commentOnIssue(issueId: string, comment: JiraCommentIssueRequest): Promise<JiraCommentIssueResponse> {
+  commentOnIssue(issueKey: string, comment: JiraCommentIssueRequest): Promise<JiraCommentIssueResponse> {
     return this.http.request({
       method: HttpMethod.POST,
-      server: this.mountPath(`issue/${issueId}/comment`),
+      server: this.mountPath(`issue/${issueKey}/comment`),
       headers: this.generateAuthHeader(),
       payload: comment
+    });
+  }
+
+  getIssue(issueKey: string): Promise<JiraGetIssueResponse> {
+    return this.http.request({
+      method: HttpMethod.GET,
+      server: this.mountPath(`issue/${issueKey}?fields=comment`),
+      headers: this.generateAuthHeader()
+    });
+  }
+
+  putIssueInTodo(issueKey: string): Promise<void> {
+    return this.http.request({
+      method: HttpMethod.POST,
+      server: this.mountPath(`issue/${issueKey}/transitions`),
+      headers: this.generateAuthHeader(),
+      payload: {
+        transition: { id: 'To do' }
+      }
     });
   }
 

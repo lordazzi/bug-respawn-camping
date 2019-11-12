@@ -1,14 +1,21 @@
+import { JiraCommentIssueRequest } from '../jira/jira-comment-issue-request.interface';
+import { JiraCreateIssueRequest } from '../jira/jira-create-issue-request.interface';
 import { JiraIntegrationApi } from '../jira/jira-integration.api';
+import { JiraSearchIssueResponse } from '../jira/jira-search-issue-response.interface';
 import { ObjectUtil } from '../util/object.util';
 import { ErrorNormalized } from './../error-handler/error-normalized.model';
 import { ErrorToRegister } from './error-to-register.interface';
+import { InteractionControllerService } from './interaction-controller.service';
 
 export class RespawnCampingService {
 
   private static instance: RespawnCampingService | null = null;
 
+  private readonly SOFTWARE_IDENTIFIER = 'catch-by-respawn-camping';
+
   private objectUtil = new ObjectUtil();
   private jiraApi = new JiraIntegrationApi();
+  private interactionController = new InteractionControllerService();
 
   constructor() {
     if (!RespawnCampingService.instance) {
@@ -18,18 +25,54 @@ export class RespawnCampingService {
     return RespawnCampingService.instance;
   }
 
-  registerRespawnedBug(normalizerName: string, error: ErrorNormalized): void {
+  async registerRespawnedBug(normalizerName: string, error: ErrorNormalized): Promise<void> {
+    if (!this.interactionController.canInteract()) {
+      return Promise.resolve();
+    }
+
     const registrable = this.createRegistrableError(normalizerName, error);
-    // this.jiraApi
+    const resultSet = await this.jiraApi.findIssueByLabel([this.SOFTWARE_IDENTIFIER, registrable.error.id]);
+    const issueKey = this.getIssueKeyFromSearch(resultSet);
+    if (issueKey) {
+      const issueResultSet = await this.jiraApi.getIssue(issueKey);
+      await this.jiraApi.putIssueInTodo(issueKey);
+
+      if (this.interactionController.shouldComment(issueResultSet)) {
+        await this.jiraApi.commentOnIssue(issueKey, this.generateCommentResultSet(error));
+        return Promise.resolve();
+      }
+
+      return Promise.resolve();
+    } else {
+      await this.jiraApi.createIssue(this.generateIssueResultSet(error));
+      return Promise.resolve();
+    }
   }
 
+  private generateCommentResultSet(error: ErrorNormalized): JiraCommentIssueRequest {
+    return {} as any;
+  }
 
+  private generateIssueResultSet(error: ErrorNormalized): JiraCreateIssueRequest {
+    return {} as any;
+  }
+
+  private getIssueKeyFromSearch(response: JiraSearchIssueResponse): string | null {
+    const list: string[] = [];
+    response.sections.forEach(section => {
+      section.issues.forEach(issue => {
+        list.push(issue.key);
+      });
+    });
+
+    return list[0] || null;
+  }
 
   private createRegistrableError(normalizerName: string, error: ErrorNormalized): ErrorToRegister {
     const clonedError = this.objectUtil.clone(error);
 
     clonedError.id = `id-${normalizerName.toLowerCase()}-${clonedError.id}`;
-    clonedError.labels.push('catch-by-respawn-camping');
+    clonedError.labels.push(this.SOFTWARE_IDENTIFIER);
 
     const aditionalInformation = `
       Environtment Information:
