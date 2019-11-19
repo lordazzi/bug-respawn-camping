@@ -1,3 +1,4 @@
+import { EnvironmentService } from '../environment.service';
 import { JiraCommentIssueRequest } from '../jira/jira-comment-issue-request.interface';
 import { JiraCreateIssueRequest } from '../jira/jira-create-issue-request.interface';
 import { JiraIntegrationApi } from '../jira/jira-integration.api';
@@ -15,6 +16,7 @@ export class RespawnCampingService {
 
   private objectUtil = new ObjectUtil();
   private jiraApi = new JiraIntegrationApi();
+  private environment = new EnvironmentService();
   private interactionController = new InteractionControllerService();
 
   constructor() {
@@ -35,7 +37,13 @@ export class RespawnCampingService {
     const issueKey = this.getIssueKeyFromSearch(resultSet);
     if (issueKey) {
       const issueResultSet = await this.jiraApi.getIssue(issueKey);
-      await this.jiraApi.putIssueInTodo(issueKey);
+      const issueTransactions = await this.jiraApi.getIssueTransitionHistory(issueKey);
+      const firstIssueState = issueTransactions.transitions.shift();
+      if (!firstIssueState || !firstIssueState.id) {
+        return;
+      }
+
+      await this.jiraApi.setIssueTransaction(issueKey, firstIssueState.id);
 
       if (this.interactionController.shouldComment(issueResultSet)) {
         await this.jiraApi.commentOnIssue(issueKey, this.generateCommentResultSet(error));
@@ -50,11 +58,44 @@ export class RespawnCampingService {
   }
 
   private generateCommentResultSet(error: ErrorNormalized): JiraCommentIssueRequest {
-    return {} as any;
+    let paragraphs = [error.title];
+    error.content = error.content.replace(/(\r|\n\n)/g, '\n');
+    paragraphs = paragraphs.concat(error.content.split('\n'));
+    const content = paragraphs.map(text => {
+      return {
+        type: 'paragraph',
+        content: [
+          {
+            text: text,
+            type: 'text',
+          }
+        ]
+      };
+    });
+
+    return {
+      body: {
+        type: 'doc',
+        version: 1,
+        content: content
+      }
+    };
   }
 
   private generateIssueResultSet(error: ErrorNormalized): JiraCreateIssueRequest {
-    return {} as any;
+    return {
+      fields: {
+        summary: error.title,
+        issuetype: {
+          name: this.environment.bugTypeName || 'Bug'
+        },
+        description: error.content,
+        labels: error.labels,
+        project: {
+          key: this.environment.defaultProjectKey
+        }
+      }
+    };
   }
 
   private getIssueKeyFromSearch(response: JiraSearchIssueResponse): string | null {

@@ -4,8 +4,22 @@ export class EnvironmentService {
 
   basicAuth: string | null = null;
   atlassianJiraServer: string | null = null;
-  defaultProjectKey: string | null = null;
+
+  /**
+   * Project key
+   */
+  defaultProjectKey = 'AC';
   maxCommentsInIssue = 30;
+
+  /**
+   * Name of issue type of bug in your Jira
+   */
+  bugTypeName = 'Problema';
+
+  /**
+   * Block integration if version change
+   */
+  jiraVersion = 3;
 
   waitTimeConfig: {
     betweenEachInteractionOnTheSameIssue: number;

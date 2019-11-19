@@ -6,6 +6,7 @@ import { JiraCommentIssueResponse } from './jira-comment-issue-response.interfac
 import { JiraCreateIssueRequest } from './jira-create-issue-request.interface';
 import { JiraCreateIssueResponse } from './jira-create-issue-response.interface';
 import { JiraGetIssueResponse } from './jira-get-issue-response.interface';
+import { JiraGetIssueTransactionResponse } from './jira-get-issue-transaction-response.interface';
 import { JiraSearchIssueResponse } from './jira-search-issue-response.interface';
 export class JiraIntegrationApi {
 
@@ -60,13 +61,21 @@ export class JiraIntegrationApi {
     });
   }
 
-  putIssueInTodo(issueKey: string): Promise<void> {
+  getIssueTransitionHistory(issueKey: string): Promise<JiraGetIssueTransactionResponse> {
+    return this.http.request({
+      method: HttpMethod.POST,
+      server: this.mountPath(`issue/${issueKey}/transitions`),
+      headers: this.generateAuthHeader()
+    });
+  }
+
+  setIssueTransaction(issueKey: string, transactId: string): Promise<void> {
     return this.http.request({
       method: HttpMethod.POST,
       server: this.mountPath(`issue/${issueKey}/transitions`),
       headers: this.generateAuthHeader(),
       payload: {
-        transition: { id: 'To do' }
+        transition: { id: transactId }
       }
     });
   }
