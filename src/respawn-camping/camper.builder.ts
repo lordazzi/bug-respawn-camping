@@ -33,6 +33,11 @@ export class CamperBuilder {
     return this;
   }
 
+  setBugTypeName(bugTypeName: string): CamperBuilder {
+    this.enviroment.bugTypeName = bugTypeName;
+    return this;
+  }
+
   basicAuth(basicAuth: string): CamperBuilder {
     this.enviroment.basicAuth = basicAuth;
     return this;

@@ -8,13 +8,13 @@ export class EnvironmentService {
   /**
    * Project key
    */
-  defaultProjectKey = 'AC';
+  defaultProjectKey = '';
   maxCommentsInIssue = 30;
 
   /**
    * Name of issue type of bug in your Jira
    */
-  bugTypeName = 'Problema';
+  bugTypeName = 'Bug';
 
   /**
    * Block integration if version change
