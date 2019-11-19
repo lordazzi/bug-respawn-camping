@@ -5,7 +5,6 @@
   "main": "index.js",
   "scripts": {
     "test": "karma start",
-    "test:debug": "karma start --browsers=ChromeDebug --browserNoActivityTimeout=0 --browserDisconnectTolerance=2",
     "lint": "tslint --project=tsconfig.json",
     "build": "gulp generate-package"
   },
