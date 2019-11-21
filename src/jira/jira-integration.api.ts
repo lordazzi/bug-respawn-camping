@@ -8,6 +8,7 @@ import { JiraCreateIssueResponse } from './jira-create-issue-response.interface'
 import { JiraGetIssueResponse } from './jira-get-issue-response.interface';
 import { JiraGetIssueTransactionResponse } from './jira-get-issue-transaction-response.interface';
 import { JiraSearchIssueResponse } from './jira-search-issue-response.interface';
+
 export class JiraIntegrationApi {
 
   private static instance: JiraIntegrationApi | null = null;
