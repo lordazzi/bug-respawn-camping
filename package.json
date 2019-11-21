@@ -40,6 +40,7 @@
     "es6-module-loader": "0.17.11",
     "gulp": "3.9.1",
     "gulp-clean": "0.4.0",
+    "gulp-concat": "2.6.1",
     "gulp-sourcemaps": "2.6.4",
     "gulp-tar": "2.1.0",
     "gulp-typescript": "5.0.0-alpha.3",

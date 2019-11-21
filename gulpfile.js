@@ -2,12 +2,14 @@ const gulp = require('gulp');
 const tar = require('gulp-tar');
 const clean = require('gulp-clean');
 const ts = require('gulp-typescript');
-const tsProject = ts.createProject('./tsconfig.json');
+const tsLibraryBuild = ts.createProject('./tsconfig.json');
+const jsLibraryBuild = ts.createProject('./tsconfig.tojs.json');
 const sourcemaps = require('gulp-sourcemaps');
 const fs = require('fs');
 let version = '';
 let projectName = '';
 
+//  COLLECT PACKAGE DATA
 try {
     const packageJson = JSON.parse(fs.readFileSync('package.json'));
     version = packageJson.version;
@@ -17,14 +19,27 @@ try {
     throw e;
 }
 
-gulp.task('transpile', () => tsProject.src()
+// TRANSPILE AS TYPESCRIPT LIBRARY
+gulp.task('transpile-typescript-lib', () => tsLibraryBuild.src()
     .pipe(sourcemaps.init())
-    .pipe(tsProject())
+    .pipe(tsLibraryBuild())
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest('./dist'))
 );
 
-gulp.task('packagify', ['transpile'], () => gulp.src('dist/**')
+// TRANSPILE AS JAVASCRIPT LIBRARY
+gulp.task('transpile-javascript-lib', () => jsLibraryBuild.src()
+    .pipe(jsLibraryBuild())
+);
+
+gulp.task('javascript-concat', ['transpile-javascript-lib'], () => gulp.src(['./js-build-head.js', 'build/**'])
+    .pipe(concat(`js/${projectName}.${version}.min.js`))
+    .pipe(concat(`js/${projectName}.min.js`))
+    .pipe(gulp.dest('./dist'))
+);
+
+// BUILD TAR
+gulp.task('packagify', ['transpile', 'javascript-concat'], () => gulp.src('dist/**')
     .pipe(gulp.dest('package/package'))
 );
 
@@ -34,7 +49,7 @@ gulp.task('compress', ['packagify'], () => gulp.src(['package/**', 'package.json
 );
 
 gulp.task('clean', ['compress'], () => gulp.src([
-    'dist', 'package'
+    'dist', 'build', 'package'
 ]).pipe(clean()));
 
 gulp.task('generate-package', ['clean']);

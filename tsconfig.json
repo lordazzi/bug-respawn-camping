@@ -1,7 +1,8 @@
 {
   "exclude": [
     "**/*.spec.ts",
-    "node_modules"
+    "node_modules",
+    "src/sandbox.ts"
   ],
   "compilerOptions": {
     "module": "commonjs",
