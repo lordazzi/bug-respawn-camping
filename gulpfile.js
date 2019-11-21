@@ -36,29 +36,17 @@ gulp.task('transpile-javascript-lib', () => jsLibraryBuild.src()
 );
 
 gulp.task('javascript-concat', ['transpile-javascript-lib'], () => gulp.src(['./js-build-head.js', 'build/**'])
-    .pipe(concat(`${projectName}.js`))
+    .pipe(concat(`${projectName}.${version}js`))
     .pipe(minify({
         ext: {
             src: '.js',
             min: '.min.js'
         }
     }))
-    .pipe(gulp.dest('./minified'))
+    .pipe(gulp.dest('.'))
 );
 
-// BUILD TAR
-gulp.task('packagify', [
-    'javascript-concat', 'transpile-typescript-lib'
-], () => gulp.src(['dist/**', `./minified/${projectName}.min.js`])
-    .pipe(gulp.dest('package/package'))
-);
-
-gulp.task('compress', ['packagify'], () => gulp.src(['package/**', 'package.json'])
-    .pipe(tar(`tar/${projectName}@${version}.tar`))
-    .pipe(gulp.dest('./'))
-);
-
-gulp.task('clean', ['compress'], () => gulp.src([
+gulp.task('clean', ['javascript-concat'], () => gulp.src([
     'dist', 'package', 'minified', 'build'
 ]).pipe(clean()));
 
