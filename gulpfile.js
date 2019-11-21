@@ -1,6 +1,8 @@
 const gulp = require('gulp');
 const tar = require('gulp-tar');
 const clean = require('gulp-clean');
+const concat = require('gulp-concat');
+const minify = require('gulp-minify');
 const ts = require('gulp-typescript');
 const tsLibraryBuild = ts.createProject('./tsconfig.json');
 const jsLibraryBuild = ts.createProject('./tsconfig.tojs.json');
@@ -30,16 +32,24 @@ gulp.task('transpile-typescript-lib', () => tsLibraryBuild.src()
 // TRANSPILE AS JAVASCRIPT LIBRARY
 gulp.task('transpile-javascript-lib', () => jsLibraryBuild.src()
     .pipe(jsLibraryBuild())
+    .pipe(gulp.dest('.'))
 );
 
 gulp.task('javascript-concat', ['transpile-javascript-lib'], () => gulp.src(['./js-build-head.js', 'build/**'])
-    .pipe(concat(`js/${projectName}.${version}.min.js`))
-    .pipe(concat(`js/${projectName}.min.js`))
-    .pipe(gulp.dest('./dist'))
+    .pipe(concat(`${projectName}.js`))
+    .pipe(minify({
+        ext: {
+            src: '.js',
+            min: '.min.js'
+        }
+    }))
+    .pipe(gulp.dest('./minified'))
 );
 
 // BUILD TAR
-gulp.task('packagify', ['transpile', 'javascript-concat'], () => gulp.src('dist/**')
+gulp.task('packagify', [
+    'javascript-concat', 'transpile-typescript-lib'
+], () => gulp.src(['dist/**', `./minified/${projectName}.min.js`])
     .pipe(gulp.dest('package/package'))
 );
 
@@ -49,7 +59,7 @@ gulp.task('compress', ['packagify'], () => gulp.src(['package/**', 'package.json
 );
 
 gulp.task('clean', ['compress'], () => gulp.src([
-    'dist', 'build', 'package'
+    'dist', 'package', 'minified', 'build'
 ]).pipe(clean()));
 
 gulp.task('generate-package', ['clean']);

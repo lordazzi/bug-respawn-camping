@@ -6,4 +6,6 @@ coverage
 debug.log
 package
 tar
+build
+minified
 src/sandbox.ts
