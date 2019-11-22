@@ -33,27 +33,29 @@ export class CommonErrorNormalizer implements CustomErrorNormalizer<ErrorEvent> 
       title = 'Error thrown: ';
       content = 'The error was thrown in the application body.\n';
       error = errorEvent.error;
+    } else {
+      id = 'script-error';
+      title = 'Script error: ';
+      content = errorEvent.message;
     }
 
-    if (!error) {
-      return null;
+    if (error) {
+      content += `Error Type: ${error.name}.`;
+      labels.push(`${id}-${error.name.toLowerCase()}`);
+
+      id += error.message
+        .substr(0, messageSizeLimitInIdContext)
+        .trim()
+        .replace(CommonErrorNormalizer.NOT_ALPHANUMERIC_CHAR, '')
+        .replace(/\s+/g, '-')
+        .toLowerCase();
+
+      title += error.message;
+
+      content += `\n      
+        Message: ${error.message}.
+        Stack: ${error.stack}.`;
     }
-
-    content += `Error Type: ${error.name}.`;
-    labels.push(`${id}-${error.name.toLowerCase()}`);
-
-    id += error.message
-      .substr(0, messageSizeLimitInIdContext)
-      .trim()
-      .replace(CommonErrorNormalizer.NOT_ALPHANUMERIC_CHAR, '')
-      .replace(/\s+/g, '-')
-      .toLowerCase();
-
-    title += error.message;
-
-    content += `\n      
-      Message: ${error.message}.
-      Stack: ${error.stack}.`;
 
     return {
       id, title, content, labels
