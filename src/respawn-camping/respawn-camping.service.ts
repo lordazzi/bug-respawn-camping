@@ -98,15 +98,8 @@ export class RespawnCampingService {
     };
   }
 
-  private getIssueKeyFromSearch(response: JiraSearchIssueResponse): string | null {
-    const list: string[] = [];
-    response.sections.forEach(section => {
-      section.issues.forEach(issue => {
-        list.push(issue.key);
-      });
-    });
-
-    return list[0] || null;
+  private getIssueKeyFromSearch(resultSet: JiraSearchIssueResponse): string | null {
+    return resultSet.issues && resultSet.issues[0].key || null;
   }
 
   private createRegistrableError(normalizerName: string, error: ErrorNormalized): ErrorToRegister {

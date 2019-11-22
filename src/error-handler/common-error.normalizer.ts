@@ -40,7 +40,7 @@ export class CommonErrorNormalizer implements CustomErrorNormalizer<ErrorEvent> 
     }
 
     content += `Error Type: ${error.name}.`;
-    labels.push(id + error.name.toLowerCase());
+    labels.push(`${id}-${error.name.toLowerCase()}`);
 
     id += error.message
       .substr(0, messageSizeLimitInIdContext)

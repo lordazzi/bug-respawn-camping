@@ -1,16 +1,24 @@
 export interface JiraSearchIssueResponse {
-  sections: {
-    label: string;
-    sub: string;
+  expand: string;
+  maxResults: number;
+  startAt: number;
+  total: number;
+  issues: {
+    expand: string;
     id: string;
-    msg: string;
-    issues: {
-      id: number;
-      key: string;
-      keyHtml: string;
-      img: string;
+    key: string;
+    self: string;
+    fields: {
       summary: string;
-      summaryText: string;
+      issuetype: {
+        id: string;
+        avatarId: number;
+        description: string;
+        iconUrl: string;
+        name: string | 'Bug';
+        self: string;
+        subtask: boolean;
+      };
     }[];
   }[];
 }

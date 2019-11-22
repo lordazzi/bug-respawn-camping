@@ -33,14 +33,19 @@ export class JiraIntegrationApi {
     });
   }
 
-  findIssueByLabel(labels: string[]): Promise<JiraSearchIssueResponse> {
+  findIssueByLabel(labels: string[], maxResults = 1): Promise<JiraSearchIssueResponse> {
     const labelsCondition = labels.map(label => 'labels = ' + label).join(' AND ');
-    const jql = `project = ${this.environment.defaultProjectKey} AND issuetype = Bug AND status != Done AND ${labelsCondition}`;
-    const query = `?currentProjectId=${this.environment.defaultProjectKey}&currentJQL=${jql}&showSubTasks=false&showSubTaskParent=false`;
+    const jql =
+      `project = ${this.environment.defaultProjectKey
+      } AND issuetype = ${this.environment.bugTypeName
+      } AND ${labelsCondition}`;
+
+    const queryString = `?currentProjectId=${this.environment.defaultProjectKey}&jql=${
+      jql}&fields=summary,issuetype&maxResults=${maxResults}`;
 
     return this.http.request({
       method: HttpMethod.GET,
-      server: this.mountPath(`issue/picker${query}`),
+      server: this.mountPath(`search${queryString}`),
       headers: this.generateAuthHeader()
     });
   }
