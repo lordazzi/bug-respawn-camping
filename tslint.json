@@ -58,7 +58,6 @@
     ],
     "no-construct": true,
     "no-debugger": true,
-    "no-duplicate-super": true,
     "no-empty": [
       true,
       "allow-empty-catch"
@@ -71,7 +70,6 @@
     ],
     "no-namespace": true,
     "no-misused-new": true,
-    "no-non-null-assertion": true,
     "no-shadowed-variable": true,
     "no-string-literal": false,
     "no-string-throw": true,

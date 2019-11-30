@@ -25,17 +25,17 @@ export class CommonErrorNormalizer implements CustomErrorNormalizer<ErrorEvent> 
 
     if (errorEvent.error && errorEvent.error.rejection) {
       id = 'runtime-in-promise';
-      title = 'Promise broken: ';
+      title = 'Promise broken';
       content = 'The error was caught in an unhandled promise.\n';
       error = errorEvent.error.rejection;
     } else if (errorEvent.error) {
       id = 'runtime-thown-error';
-      title = 'Error thrown: ';
+      title = 'Error thrown';
       content = 'The error was thrown in the application body.\n';
       error = errorEvent.error;
     } else {
       id = 'script-error';
-      title = 'Script error: ';
+      title = 'Script error';
       content = errorEvent.message;
     }
 
@@ -55,6 +55,8 @@ export class CommonErrorNormalizer implements CustomErrorNormalizer<ErrorEvent> 
       content += `\n      
         Message: ${error.message}.
         Stack: ${error.stack}.`;
+    } else {
+      labels.push(`${id}-${errorEvent.message.toLowerCase()}`);
     }
 
     return {

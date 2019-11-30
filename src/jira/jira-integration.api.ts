@@ -87,7 +87,7 @@ export class JiraIntegrationApi {
   }
 
   private mountPath(endpoint: string): string {
-    return `${this.environment.atlassianJiraServer}rest/api/3/${endpoint}`;
+    return `${this.environment.atlassianJiraServer}rest/api/2/${endpoint}`;
   }
 
   private generateAuthHeader(): {

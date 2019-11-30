@@ -99,7 +99,7 @@ export class RespawnCampingService {
   }
 
   private getIssueKeyFromSearch(resultSet: JiraSearchIssueResponse): string | null {
-    return resultSet.issues && resultSet.issues[0].key || null;
+    return resultSet.issues && resultSet.issues[0] && resultSet.issues[0].key || null;
   }
 
   private createRegistrableError(normalizerName: string, error: ErrorNormalized): ErrorToRegister {
