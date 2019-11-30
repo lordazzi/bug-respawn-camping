@@ -3,6 +3,7 @@ const clean = require('gulp-clean');
 const concat = require('gulp-concat');
 const minify = require('gulp-minify');
 const ts = require('gulp-typescript');
+const sourcemaps = require('gulp-sourcemaps');
 const jsLibraryBuild = ts.createProject('./tsconfig.js.json');
 const tsLibraryBuild = ts.createProject('./tsconfig.json');
 const fs = require('fs');
@@ -47,7 +48,7 @@ gulp.task('javascript-minify', ['transpile-to-javascript'], () => gulp.src(['./j
 gulp.task('clean', [
     'javascript-minify', 'transpile-typescript-lib'
 ], () => gulp.src([
-    'dist', 'package', 'minified', 'build'
+    'package', 'minified', 'build'
 ]).pipe(clean()));
 
 gulp.task('generate-package', ['clean']);
