@@ -3,7 +3,8 @@ const clean = require('gulp-clean');
 const concat = require('gulp-concat');
 const minify = require('gulp-minify');
 const ts = require('gulp-typescript');
-const jsLibraryBuild = ts.createProject('./tsconfig.json');
+const jsLibraryBuild = ts.createProject('./tsconfig.js.json');
+const tsLibraryBuild = ts.createProject('./tsconfig.json');
 const fs = require('fs');
 let version = '';
 let projectName = '';
@@ -24,6 +25,14 @@ gulp.task('transpile-to-javascript', () => jsLibraryBuild.src()
     .pipe(gulp.dest('.'))
 );
 
+// TRANSPILE AS TYPESCRIPT LIBRARY
+gulp.task('transpile-typescript-lib', () => tsLibraryBuild.src()
+    .pipe(sourcemaps.init())
+    .pipe(tsLibraryBuild())
+    .pipe(sourcemaps.write('.'))
+    .pipe(gulp.dest('./dist'))
+);
+
 gulp.task('javascript-minify', ['transpile-to-javascript'], () => gulp.src(['./js-build-head.js', 'build/**'])
     .pipe(concat(`${projectName}.${version}js`))
     .pipe(minify({
@@ -35,7 +44,9 @@ gulp.task('javascript-minify', ['transpile-to-javascript'], () => gulp.src(['./j
     .pipe(gulp.dest('.'))
 );
 
-gulp.task('clean', ['javascript-minify'], () => gulp.src([
+gulp.task('clean', [
+    'javascript-minify', 'transpile-typescript-lib'
+], () => gulp.src([
     'dist', 'package', 'minified', 'build'
 ]).pipe(clean()));
 
