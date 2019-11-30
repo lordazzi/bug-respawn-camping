@@ -1,0 +1,12 @@
+node_modules
+dist
+mass
+index.spec.ts
+coverage
+debug.log
+package
+tar
+build
+minified
+src/sandbox.ts
+bug-respawn-camping*

@@ -1,0 +1,10 @@
+./node_modules/*
+./src/*
+.gitignore
+.travis.yml
+karma.conf.js
+tslint.json
+tsconfig.json
+systemjs.config.js
+debug.log
+js-build-head.js
