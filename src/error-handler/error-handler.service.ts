@@ -1,5 +1,4 @@
 import { RespawnCampingService } from '../respawn-camping/respawn-camping.service';
-import { CommonErrorNormalizer } from './common-error.normalizer';
 import { CustomErrorNormalizer } from './custom-error-nomalizar.interface';
 import { NormalizerCLazz } from './normalizer-clazz.type';
 
@@ -16,7 +15,6 @@ export class ErrorHandlingService {
   constructor() {
     if (!ErrorHandlingService.instance) {
       ErrorHandlingService.instance = this;
-      this.initHandler();
     }
 
     return ErrorHandlingService.instance;
@@ -43,10 +41,5 @@ export class ErrorHandlingService {
         this.camper.registerRespawnedBug(normalizer.name, normalized);
       }
     }
-  }
-
-  private initHandler(): void {
-    addEventListener('error', event => this.launch(event));
-    this.declareCustomErrorNormalizer([CommonErrorNormalizer]);
   }
 }
