@@ -4,6 +4,7 @@ import { JiraCreateIssueRequest } from '../jira/jira-create-issue-request.interf
 import { JiraIntegrationApi } from '../jira/jira-integration.api';
 import { JiraSearchIssueResponse } from '../jira/jira-search-issue-response.interface';
 import { ObjectUtil } from '../util/object.util';
+import { StringUtil } from '../util/string.util';
 import { ErrorNormalized } from './../error-handler/error-normalized.model';
 import { ErrorToRegister } from './error-to-register.interface';
 import { InteractionControllerService } from './interaction-controller.service';
@@ -15,6 +16,7 @@ export class RespawnCampingService {
   private readonly SOFTWARE_IDENTIFIER = 'catch-by-respawn-camping';
 
   private objectUtil = new ObjectUtil();
+  private stringUtil = new StringUtil();
   private jiraApi = new JiraIntegrationApi();
   private environment = new EnvironmentService();
   private interactionController = new InteractionControllerService();
@@ -105,8 +107,10 @@ export class RespawnCampingService {
   private createRegistrableError(normalizerName: string, error: ErrorNormalized): ErrorToRegister {
     const clonedError = this.objectUtil.clone(error);
 
-    clonedError.id = `id-${normalizerName.toLowerCase()}-${clonedError.id}`;
+    clonedError.id = this.stringUtil.labelfy(`id-${normalizerName}-${clonedError.id}`);
     clonedError.labels.push(this.SOFTWARE_IDENTIFIER);
+    clonedError.labels = clonedError.labels.map(label => this.stringUtil.labelfy(label));
+    clonedError.labels.push(clonedError.id);
 
     const aditionalInformation = `
       Environtment Information:

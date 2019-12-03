@@ -9,7 +9,7 @@ export class ErrorHandlingService {
   private camper = new RespawnCampingService();
 
   private errorNormalizer: {
-    [name: string]: CustomErrorNormalizer<unknown>
+    [name: string]: CustomErrorNormalizer<any>
   } = {};
 
   constructor() {
@@ -27,13 +27,13 @@ export class ErrorHandlingService {
     });
   }
 
-  private identifyNormalizer(thrown: unknown): CustomErrorNormalizer<unknown> | null {
+  private identifyNormalizer(thrown: any): CustomErrorNormalizer<any> | null {
     const nameFound = Object.keys(this.errorNormalizer).find(name => this.errorNormalizer[name].typeCheck(thrown)) || null;
 
     return this.errorNormalizer[nameFound || ''] || null;
   }
 
-  launch(thrownThing: unknown): void {
+  launch(thrownThing: any): void {
     const normalizer = this.identifyNormalizer(thrownThing);
     if (normalizer) {
       const normalized = normalizer.normalize(thrownThing);

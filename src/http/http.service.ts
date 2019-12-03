@@ -25,7 +25,7 @@ export class HttpService {
 
   request(options: HttpRequestOptions): Promise<any> {
     const xhr = new HttpService.XMLHttpRequest();
-    xhr.open(options.method, options.server);
+    xhr.open(<string><any>options.method, options.server);
     this.setRequestHeaders(xhr, options.headers || {});
 
     const promise = this.listenRequest(xhr);
