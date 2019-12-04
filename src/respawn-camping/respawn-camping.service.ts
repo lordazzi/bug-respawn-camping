@@ -48,21 +48,22 @@ export class RespawnCampingService {
       await this.jiraApi.setIssueTransaction(issueKey, firstIssueState.id);
 
       if (this.interactionController.shouldComment(issueResultSet)) {
-        await this.jiraApi.commentOnIssue(issueKey, this.generateCommentResultSet(error));
+        await this.jiraApi.commentOnIssue(issueKey, this.generateCommentResultSet(registrable));
         return Promise.resolve();
       }
 
       return Promise.resolve();
     } else {
-      await this.jiraApi.createIssue(this.generateIssueResultSet(error));
+      await this.jiraApi.createIssue(this.generateIssueResultSet(registrable));
       return Promise.resolve();
     }
   }
 
-  private generateCommentResultSet(error: ErrorNormalized): JiraCommentIssueRequest {
-    let paragraphs = [error.title];
-    error.content = error.content.replace(/(\r|\n\n)/g, '\n');
-    paragraphs = paragraphs.concat(error.content.split('\n'));
+  private generateCommentResultSet(toRegister: ErrorToRegister): JiraCommentIssueRequest {
+    let paragraphs = [toRegister.error.title];
+    const textContent = toRegister.aditionalInformation.replace(/(\r|\n+)/g, '\n');
+    paragraphs = paragraphs.concat(textContent.split('\n'));
+
     const content = paragraphs.map(text => {
       return {
         type: 'paragraph',
@@ -84,15 +85,15 @@ export class RespawnCampingService {
     };
   }
 
-  private generateIssueResultSet(error: ErrorNormalized): JiraCreateIssueRequest {
+  private generateIssueResultSet(toRegister: ErrorToRegister): JiraCreateIssueRequest {
     return {
       fields: {
-        summary: error.title,
+        summary: toRegister.error.title,
         issuetype: {
           name: this.environment.bugTypeName || 'Bug'
         },
-        description: error.content,
-        labels: error.labels,
+        description: toRegister.aditionalInformation,
+        labels: toRegister.error.labels,
         project: {
           key: this.environment.defaultProjectKey
         }
@@ -112,13 +113,16 @@ export class RespawnCampingService {
     clonedError.labels = clonedError.labels.map(label => this.stringUtil.labelfy(label));
     clonedError.labels.push(clonedError.id);
 
-    const aditionalInformation = `
-      Environtment Information:
-      User Agent: ${navigator.userAgent};
-      Browser size: (${innerWidth} x ${innerHeight});
-      Url: ${location.href};
-      Time: ${this.getFormattedCurrentDate()};
-    `;
+    const aditionalInformation = '' +
+      `Environtment Information:\n` +
+      `User Agent: ${navigator.userAgent};\n` +
+      `Browser size: (${innerWidth} x ${innerHeight});\n` +
+      `Url: ${location.href};\n` +
+      `Time: ${this.getFormattedCurrentDate()};\n` +
+      '\n' +
+      `${this.environment.aditionalInformation}\n` +
+      '\n' +
+      `${error.content}\n`;
 
     return {
       originName: normalizerName,

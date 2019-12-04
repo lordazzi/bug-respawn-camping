@@ -21,6 +21,12 @@ export class EnvironmentService {
    */
   jiraVersion = 3;
 
+  /**
+   * Allow you to include software information
+   * for all registred issue
+   */
+  aditionalInformation = '';
+
   waitTimeConfig: {
     betweenEachInteractionOnTheSameIssue: number;
     lowNetworkWhileUserIsActive: number;
