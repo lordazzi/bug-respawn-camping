@@ -42,7 +42,6 @@
   "license": "MIT",
   "devDependencies": {
     "@types/jasmine": "2.8.6",
-    "@types/node": "10.9.4",
     "coveralls": "3.0.1",
     "es6-module-loader": "0.17.11",
     "gulp": "3.9.1",

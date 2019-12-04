@@ -10,6 +10,7 @@ You can install this library as a typescript dependency of your angular project 
 You can also just import the ```bug-respawn-camping.x.x.x.js``` in your browser javascript application (just make sure you can access the application from a cross origin).
 
 ```<script src="some/path/bug-respawn-camping.x.x.x.js"></script>```
+```<script src="some/path/bug-respawn-camping.x.x.x.min.js"></script>```
 
 ## Configure
 
@@ -114,12 +115,12 @@ export interface ErrorNormalized {
   id: string;
 
   /**
-   * Title in Jira
+   * Summary in Jira
    */
   title: string;
 
   /**
-   * Summary in Jira
+   * Description in Jira
    */
   content: string;
 
@@ -162,3 +163,4 @@ The main point of use of this library is for errors thrown in the body of the ap
 2. The library need create a documentation about unit tests over new Error Normalizers.
 3. The library need to implements way to stop Jira interaction in pre-configured dates and hours.
 4. Create default classes to register no connection or low network speed
+5. Upgrade TypeScript (to support strict mode and unknow type) version and unit test structure

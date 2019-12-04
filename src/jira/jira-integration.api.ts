@@ -1,4 +1,4 @@
-import { HttpMethod } from '../http/http-method.enum';
+import { HttpMethod } from '../http/http-method.const';
 import { EnvironmentService } from './../environment.service';
 import { HttpService } from './../http/http.service';
 import { JiraCommentIssueRequest } from './jira-comment-issue-request.interface';

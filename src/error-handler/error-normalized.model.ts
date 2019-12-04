@@ -14,13 +14,15 @@ export interface ErrorNormalized {
   id: string;
 
   /**
-   * Title in Jira
+   * Summary in Jira
    */
+
   title: string;
 
   /**
-   * Summary in Jira
+   * Description in Jira
    */
+
   content: string;
 
   /**
