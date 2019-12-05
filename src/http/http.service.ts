@@ -10,6 +10,7 @@ export class HttpService {
   static XMLHttpRequest = XMLHttpRequest;
 
   private readonly HTTP_DONE = 4;
+  private readonly HTTP_STATUS_NO_CONTENT = 204;
 
   private defaultHeaders = {
     'Content-Type': 'application/json'
@@ -43,12 +44,13 @@ export class HttpService {
     const statusCodeSimplification = 100;
     const statusCodeSuccessLevel = 2;
 
-    return new Promise<EcmaModel>((resolve, reject) => {
+    return new Promise<EcmaModel | null>((resolve, reject) => {
       xhr.onreadystatechange = () => {
         if (xhr.readyState === this.HTTP_DONE) {
           if (Math.floor(xhr.status / statusCodeSimplification) === statusCodeSuccessLevel) {
             try {
-              resolve(JSON.parse(xhr.responseText));
+              const responseData = xhr.status === this.HTTP_STATUS_NO_CONTENT ? null : JSON.parse(xhr.responseText);
+              resolve(responseData);
             } catch (e) {
               reject(e);
             }

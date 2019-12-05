@@ -37,6 +37,11 @@ export class HandlerBuilder {
     return this;
   }
 
+  setInitialTransactionId(initialTransactionId: string): HandlerBuilder {
+    this.enviroment.initialTransactionId = initialTransactionId;
+    return this;
+  }
+
   basicAuth(basicAuth: string): HandlerBuilder {
     this.enviroment.basicAuth = basicAuth;
     return this;

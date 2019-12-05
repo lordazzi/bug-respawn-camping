@@ -39,14 +39,13 @@ export class RespawnCampingService {
     const issueKey = this.getIssueKeyFromSearch(resultSet);
     if (issueKey) {
       const issueResultSet = await this.jiraApi.getIssue(issueKey);
-      const issueTransactions = await this.jiraApi.getIssueTransitionHistory(issueKey);
-      const firstIssueState = issueTransactions.transitions.shift();
-      if (!firstIssueState || !firstIssueState.id) {
+      const firstStateId = await this.getFirstTransactionId(issueKey);
+
+      if (!firstStateId) {
         return;
       }
 
-      await this.jiraApi.setIssueTransaction(issueKey, firstIssueState.id);
-
+      await this.jiraApi.setIssueTransaction(issueKey, firstStateId);
       if (this.interactionController.shouldComment(issueResultSet)) {
         await this.jiraApi.commentOnIssue(issueKey, this.generateCommentResultSet(registrable));
         return Promise.resolve();
@@ -57,6 +56,19 @@ export class RespawnCampingService {
       await this.jiraApi.createIssue(this.generateIssueResultSet(registrable));
       return Promise.resolve();
     }
+  }
+
+  private async getFirstTransactionId(issueKey: string): Promise<string | null> {
+    let firstStateId = this.environment.initialTransactionId;
+    if (!firstStateId) {
+      const issueTransactions = await this.jiraApi.getIssueTransitionHistory(issueKey);
+      const firstIssueState = issueTransactions.transitions.shift();
+      firstStateId = firstIssueState && firstIssueState.id || null;
+
+      return Promise.resolve(firstStateId);
+    }
+
+    return Promise.resolve(firstStateId);
   }
 
   private generateCommentResultSet(toRegister: ErrorToRegister): JiraCommentIssueRequest {
@@ -114,7 +126,7 @@ export class RespawnCampingService {
     clonedError.labels.push(clonedError.id);
 
     const aditionalInformation = '' +
-      `Environtment Information:\n` +
+      `Environment Information:\n` +
       `User Agent: ${navigator.userAgent};\n` +
       `Browser size: (${innerWidth} x ${innerHeight});\n` +
       `Url: ${location.href};\n` +

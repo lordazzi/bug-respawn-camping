@@ -69,7 +69,7 @@ export class JiraIntegrationApi {
 
   getIssueTransitionHistory(issueKey: string): Promise<JiraGetIssueTransactionResponse> {
     return this.http.request({
-      method: HttpMethod.POST,
+      method: HttpMethod.GET,
       server: this.mountPath(`issue/${issueKey}/transitions`),
       headers: this.generateAuthHeader()
     });
@@ -87,7 +87,7 @@ export class JiraIntegrationApi {
   }
 
   private mountPath(endpoint: string): string {
-    return `${this.environment.atlassianJiraServer}rest/api/2/${endpoint}`;
+    return `${this.environment.atlassianJiraServer}rest/api/${this.environment.jiraVersion}/${endpoint}`;
   }
 
   private generateAuthHeader(): {
