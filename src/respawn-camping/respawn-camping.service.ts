@@ -72,28 +72,8 @@ export class RespawnCampingService {
   }
 
   private generateCommentResultSet(toRegister: ErrorToRegister): JiraCommentIssueRequest {
-    let paragraphs = [toRegister.error.title];
-    const textContent = toRegister.aditionalInformation.replace(/(\r|\n+)/g, '\n');
-    paragraphs = paragraphs.concat(textContent.split('\n'));
-
-    const content = paragraphs.map(text => {
-      return {
-        type: 'paragraph',
-        content: [
-          {
-            text: text,
-            type: 'text',
-          }
-        ]
-      };
-    });
-
     return {
-      body: {
-        type: 'doc',
-        version: 1,
-        content: content
-      }
+      body: `${toRegister.error.title}\n\n${toRegister.aditionalInformation}`
     };
   }
 

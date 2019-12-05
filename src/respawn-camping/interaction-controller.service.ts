@@ -20,6 +20,17 @@ export class InteractionControllerService {
   }
 
   shouldComment(issue: JiraGetIssueResponse): boolean {
+    const comment = issue.fields.comment.comments.pop();
+
+    if (comment) {
+      const configuredEarly = new Date().getTime() - this.environment.waitTimeConfig.betweenEachInteractionOnTheSameIssue;
+      const isTooEarlyToComment = new Date(comment.updated) > new Date(configuredEarly);
+
+      if (isTooEarlyToComment) {
+        return false;
+      }
+    }
+
     if (issue.fields.comment.total <= this.environment.maxCommentsInIssue) {
       return true;
     }

@@ -2,6 +2,8 @@
 
 > This tool is not sufficiently tested to be used in your production environment. We recommend that it be installed for approval only and that defects or notions of improvement be shared with us via issue or via pull request.
 
+> This library will work only with Jira API v2
+
 ## Installing
 You can install this library as a typescript dependency of your angular project or typescript project (as well as any project that supports the installation of typescript libraries).
 

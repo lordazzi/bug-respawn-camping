@@ -74,7 +74,7 @@ export class JiraIntegrationApi {
   getIssue(issueKey: string): Promise<JiraGetIssueResponse> {
     return this.http.request({
       method: HttpMethod.GET,
-      server: this.mountPath(`issue/${issueKey}?fields=comment,worklog`),
+      server: this.mountPath(`issue/${issueKey}?fields=comment`),
       headers: this.generateAuthHeader()
     });
   }

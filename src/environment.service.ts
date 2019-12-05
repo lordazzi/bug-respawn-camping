@@ -37,9 +37,6 @@ export class EnvironmentService {
    */
   aditionalInformation = '';
 
-  /**
-   * TODO:
-   */
   waitTimeConfig: {
     betweenEachInteractionOnTheSameIssue: number;
     lowNetworkWhileUserIsActive: number;
@@ -50,6 +47,7 @@ export class EnvironmentService {
       betweenEachInteractionOnTheSameIssue: 7200000, // 2 * 20 * 20 * 1000, 2hrs
 
       /**
+       * TODO:
        * Stop interacting with Jira when user is active and haven't
        * much network speed
        */
