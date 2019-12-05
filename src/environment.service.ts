@@ -9,6 +9,7 @@ export class EnvironmentService {
    * Project key
    */
   defaultProjectKey = '';
+
   maxCommentsInIssue = 30;
 
   /**
@@ -17,9 +18,24 @@ export class EnvironmentService {
   bugTypeName = 'Bug';
 
   /**
+   * TODO:
+   *
+   * The backlog or todo transaction id.
+   * If this id is given, the library will not execute an aditional endpoint to find out
+   * the initial transaction of each issue each time it is registered.
+   */
+  initialTransactionId: string | null = null;
+
+  /**
    * Block integration if version change
    */
-  jiraVersion = 3;
+  jiraVersion = 2;
+
+  /**
+   * Allow you to include software information
+   * for all registred issue
+   */
+  aditionalInformation = '';
 
   waitTimeConfig: {
     betweenEachInteractionOnTheSameIssue: number;
@@ -31,12 +47,16 @@ export class EnvironmentService {
       betweenEachInteractionOnTheSameIssue: 7200000, // 2 * 20 * 20 * 1000, 2hrs
 
       /**
+       * TODO:
        * Stop interacting with Jira when user is active and haven't
        * much network speed
        */
       lowNetworkWhileUserIsActive: 7200000, // 2 * 20 * 20 * 1000, 2hrs
     };
 
+  /**
+   * TODO:
+   */
   stopInteractWhen: {
     criticalDays: {
       day: number;

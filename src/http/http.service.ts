@@ -1,11 +1,13 @@
 import { ObjectUtil } from '../util/object.util';
 import { EcmaModel } from './../common-types/ecma-model.type';
 import { HttpRequestOptions } from './http-request-options.interface';
+
 export class HttpService {
 
   private static instance: HttpService | null = null;
 
   private objectUtil = new ObjectUtil();
+  static XMLHttpRequest = XMLHttpRequest;
 
   private defaultHeaders = {
     'Content-Type': 'application/json'
@@ -20,8 +22,8 @@ export class HttpService {
   }
 
   request(options: HttpRequestOptions): Promise<any> {
-    const xhr = new XMLHttpRequest();
-    xhr.open(options.method, options.server);
+    const xhr = new HttpService.XMLHttpRequest();
+    xhr.open(<string><any>options.method, options.server);
     this.setRequestHeaders(xhr, options.headers || {});
 
     const promise = this.listenRequest(xhr);
@@ -38,13 +40,16 @@ export class HttpService {
   private listenRequest(xhr: XMLHttpRequest): Promise<EcmaModel> {
     const statusCodeSimplification = 100;
     const statusCodeSuccessLevel = 2;
+    const httpReadyStateDone = 4;
+    const httpNoContentStatus = 204;
 
-    return new Promise<EcmaModel>((resolve, reject) => {
+    return new Promise<EcmaModel | null>((resolve, reject) => {
       xhr.onreadystatechange = () => {
-        if (xhr.readyState === XMLHttpRequest.DONE) {
+        if (xhr.readyState === httpReadyStateDone) {
           if (Math.floor(xhr.status / statusCodeSimplification) === statusCodeSuccessLevel) {
             try {
-              resolve(JSON.parse(xhr.responseText));
+              const responseData = xhr.status === httpNoContentStatus ? null : JSON.parse(xhr.responseText);
+              resolve(responseData);
             } catch (e) {
               reject(e);
             }

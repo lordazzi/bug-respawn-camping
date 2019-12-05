@@ -1,7 +1,5 @@
-import { HttpMethod } from './http-method.enum';
-
 export interface HttpRequestOptions {
-  method: HttpMethod;
+  method: string;
   server: string;
   headers: {
     [header: string]: string

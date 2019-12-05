@@ -4,6 +4,7 @@ import { JiraCreateIssueRequest } from '../jira/jira-create-issue-request.interf
 import { JiraIntegrationApi } from '../jira/jira-integration.api';
 import { JiraSearchIssueResponse } from '../jira/jira-search-issue-response.interface';
 import { ObjectUtil } from '../util/object.util';
+import { StringUtil } from '../util/string.util';
 import { ErrorNormalized } from './../error-handler/error-normalized.model';
 import { ErrorToRegister } from './error-to-register.interface';
 import { InteractionControllerService } from './interaction-controller.service';
@@ -15,6 +16,7 @@ export class RespawnCampingService {
   private readonly SOFTWARE_IDENTIFIER = 'catch-by-respawn-camping';
 
   private objectUtil = new ObjectUtil();
+  private stringUtil = new StringUtil();
   private jiraApi = new JiraIntegrationApi();
   private environment = new EnvironmentService();
   private interactionController = new InteractionControllerService();
@@ -37,60 +39,53 @@ export class RespawnCampingService {
     const issueKey = this.getIssueKeyFromSearch(resultSet);
     if (issueKey) {
       const issueResultSet = await this.jiraApi.getIssue(issueKey);
-      const issueTransactions = await this.jiraApi.getIssueTransitionHistory(issueKey);
-      const firstIssueState = issueTransactions.transitions.shift();
-      if (!firstIssueState || !firstIssueState.id) {
+      const firstStateId = await this.getFirstTransactionId(issueKey);
+
+      if (!firstStateId) {
         return;
       }
 
-      await this.jiraApi.setIssueTransaction(issueKey, firstIssueState.id);
-
+      await this.jiraApi.setIssueTransaction(issueKey, firstStateId);
       if (this.interactionController.shouldComment(issueResultSet)) {
-        await this.jiraApi.commentOnIssue(issueKey, this.generateCommentResultSet(error));
+        await this.jiraApi.commentOnIssue(issueKey, this.generateCommentResultSet(registrable));
         return Promise.resolve();
       }
 
       return Promise.resolve();
     } else {
-      await this.jiraApi.createIssue(this.generateIssueResultSet(error));
+      await this.jiraApi.createIssue(this.generateIssueResultSet(registrable));
       return Promise.resolve();
     }
   }
 
-  private generateCommentResultSet(error: ErrorNormalized): JiraCommentIssueRequest {
-    let paragraphs = [error.title];
-    error.content = error.content.replace(/(\r|\n\n)/g, '\n');
-    paragraphs = paragraphs.concat(error.content.split('\n'));
-    const content = paragraphs.map(text => {
-      return {
-        type: 'paragraph',
-        content: [
-          {
-            text: text,
-            type: 'text',
-          }
-        ]
-      };
-    });
+  private async getFirstTransactionId(issueKey: string): Promise<string | null> {
+    let firstStateId = this.environment.initialTransactionId;
+    if (!firstStateId) {
+      const issueTransactions = await this.jiraApi.getIssueTransitionHistory(issueKey);
+      const firstIssueState = issueTransactions.transitions.shift();
+      firstStateId = firstIssueState && firstIssueState.id || null;
 
+      return Promise.resolve(firstStateId);
+    }
+
+    return Promise.resolve(firstStateId);
+  }
+
+  private generateCommentResultSet(toRegister: ErrorToRegister): JiraCommentIssueRequest {
     return {
-      body: {
-        type: 'doc',
-        version: 1,
-        content: content
-      }
+      body: `${toRegister.error.title}\n\n${toRegister.aditionalInformation}`
     };
   }
 
-  private generateIssueResultSet(error: ErrorNormalized): JiraCreateIssueRequest {
+  private generateIssueResultSet(toRegister: ErrorToRegister): JiraCreateIssueRequest {
     return {
       fields: {
-        summary: error.title,
+        summary: toRegister.error.title,
         issuetype: {
           name: this.environment.bugTypeName || 'Bug'
         },
-        description: error.content,
-        labels: error.labels,
+        description: toRegister.aditionalInformation,
+        labels: toRegister.error.labels,
         project: {
           key: this.environment.defaultProjectKey
         }
@@ -105,16 +100,21 @@ export class RespawnCampingService {
   private createRegistrableError(normalizerName: string, error: ErrorNormalized): ErrorToRegister {
     const clonedError = this.objectUtil.clone(error);
 
-    clonedError.id = `id-${normalizerName.toLowerCase()}-${clonedError.id}`;
+    clonedError.id = this.stringUtil.labelfy(`id-${normalizerName}-${clonedError.id}`);
     clonedError.labels.push(this.SOFTWARE_IDENTIFIER);
+    clonedError.labels = clonedError.labels.map(label => this.stringUtil.labelfy(label));
+    clonedError.labels.push(clonedError.id);
 
-    const aditionalInformation = `
-      Environtment Information:
-      User Agent: ${navigator.userAgent};
-      Browser size: (${innerWidth} x ${innerHeight});
-      Url: ${location.href};
-      Time: ${this.getFormattedCurrentDate()};
-    `;
+    const aditionalInformation = '' +
+      `Environment Information:\n` +
+      `User Agent: ${navigator.userAgent};\n` +
+      `Browser size: (${innerWidth} x ${innerHeight});\n` +
+      `Url: ${location.href};\n` +
+      `Time: ${this.getFormattedCurrentDate()};\n` +
+      '\n' +
+      `${this.environment.aditionalInformation}\n` +
+      '\n' +
+      `${error.content}\n`;
 
     return {
       originName: normalizerName,

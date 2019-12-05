@@ -3,11 +3,9 @@ import { ErrorNormalized } from './error-normalized.model';
 
 export class CommonErrorNormalizer implements CustomErrorNormalizer<ErrorEvent> {
 
-  private static NOT_ALPHANUMERIC_CHAR = /[^a-z0-9\s]/ig;
-
   name = 'error-event';
 
-  typeCheck(possibleErrorEvent: unknown): possibleErrorEvent is ErrorEvent {
+  typeCheck(possibleErrorEvent: any): possibleErrorEvent is ErrorEvent {
     if (possibleErrorEvent instanceof ErrorEvent) {
       return true;
     }
@@ -16,7 +14,6 @@ export class CommonErrorNormalizer implements CustomErrorNormalizer<ErrorEvent> 
   }
 
   normalize(errorEvent: ErrorEvent): ErrorNormalized | null {
-    const messageSizeLimitInIdContext = 40;
     let id = '';
     let content = '';
     let title = '';
@@ -41,22 +38,16 @@ export class CommonErrorNormalizer implements CustomErrorNormalizer<ErrorEvent> 
 
     if (error) {
       content += `Error Type: ${error.name}.`;
-      labels.push(`${id}-${error.name.toLowerCase()}`);
+      labels.push(`${id}-${error.name}`);
 
-      id += error.message
-        .substr(0, messageSizeLimitInIdContext)
-        .trim()
-        .replace(CommonErrorNormalizer.NOT_ALPHANUMERIC_CHAR, '')
-        .replace(/\s+/g, '-')
-        .toLowerCase();
-
+      id += error.message;
       title += error.message;
 
       content += `\n      
         Message: ${error.message}.
         Stack: ${error.stack}.`;
     } else {
-      labels.push(`${id}-${errorEvent.message.toLowerCase()}`);
+      labels.push(`${id}-${errorEvent.message}`);
     }
 
     return {

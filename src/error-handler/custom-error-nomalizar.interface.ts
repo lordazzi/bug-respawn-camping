@@ -15,7 +15,7 @@ export interface CustomErrorNormalizer<ErrorType> {
    * @param throwable
    * every throwable thing in ecmascript
    */
-  typeCheck(throwable: unknown): boolean;
+  typeCheck(throwable: any): boolean;
 
   /**
    * Here you say to us how this thrown structure will

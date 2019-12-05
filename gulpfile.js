@@ -35,7 +35,7 @@ gulp.task('transpile-typescript-lib', () => tsLibraryBuild.src()
 );
 
 gulp.task('javascript-minify', ['transpile-to-javascript'], () => gulp.src(['./js-build-head.js', 'build/**'])
-    .pipe(concat(`${projectName}.${version}js`))
+    .pipe(concat(`${projectName}.${version}.js`))
     .pipe(minify({
         ext: {
             src: '.js',
