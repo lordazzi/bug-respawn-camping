@@ -1,5 +1,9 @@
 # Bug Spawn Camping, for TypeScript / Angular applications
 
+[![npm version](https://badge.fury.io/js/bug-respawn-camping.svg)](https://badge.fury.io/js/bug-respawn-camping)
+[![Build Status](https://travis-ci.org/lordazzi/bug-respawn-camping.svg?branch=master)](https://travis-ci.org/lordazzi/bug-respawn-camping)
+[![Open Source Love](https://badges.frapsoft.com/os/mit/mit.svg?v=102)](https://github.com/lordazzi/bug-respawn-camping/blob/documentation/LICENSE)
+
 > This tool is not sufficiently tested to be used in your production environment. We recommend that it be installed for approval only and that defects or notions of improvement be shared with us via issue or via pull request.
 
 > This library will work only with Jira API v2
