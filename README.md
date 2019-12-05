@@ -4,6 +4,9 @@
 
 > This library will work only with Jira API v2
 
+## Overview
+![Example](./docs-imgs/bug-catch-in-respawn.gif)
+
 ## Installing
 You can install this library as a typescript dependency of your angular project or typescript project (as well as any project that supports the installation of typescript libraries).
 
