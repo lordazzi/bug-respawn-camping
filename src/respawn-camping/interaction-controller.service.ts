@@ -20,7 +20,7 @@ export class InteractionControllerService {
   }
 
   shouldComment(issue: JiraGetIssueResponse): boolean {
-    if (issue.fields.comment.length <= this.environment.maxCommentsInIssue) {
+    if (issue.fields.comment.total <= this.environment.maxCommentsInIssue) {
       return true;
     }
 

@@ -24,6 +24,9 @@ export class JiraIntegrationApi {
     return JiraIntegrationApi.instance;
   }
 
+  /**
+   * https://developer.atlassian.com/cloud/jira/platform/rest/v2/#api-rest-api-2-issue-post
+   */
   createIssue(createIssue: JiraCreateIssueRequest): Promise<JiraCreateIssueResponse> {
     return this.http.request({
       method: HttpMethod.POST,
@@ -33,6 +36,9 @@ export class JiraIntegrationApi {
     });
   }
 
+  /**
+   * https://developer.atlassian.com/cloud/jira/platform/rest/v2/#api-rest-api-2-search-get
+   */
   findIssueByLabel(labels: string[], maxResults = 1): Promise<JiraSearchIssueResponse> {
     const labelsCondition = labels.map(label => 'labels = ' + label).join(' AND ');
     const jql =
@@ -50,6 +56,9 @@ export class JiraIntegrationApi {
     });
   }
 
+  /**
+   * https://developer.atlassian.com/cloud/jira/platform/rest/v2/#api-rest-api-2-issue-issueIdOrKey-comment-post
+   */
   commentOnIssue(issueKey: string, comment: JiraCommentIssueRequest): Promise<JiraCommentIssueResponse> {
     return this.http.request({
       method: HttpMethod.POST,
@@ -59,14 +68,20 @@ export class JiraIntegrationApi {
     });
   }
 
+  /**
+   * https://developer.atlassian.com/cloud/jira/platform/rest/v2/#api-rest-api-2-issue-issueIdOrKey-get
+   */
   getIssue(issueKey: string): Promise<JiraGetIssueResponse> {
     return this.http.request({
       method: HttpMethod.GET,
-      server: this.mountPath(`issue/${issueKey}?fields=comment`),
+      server: this.mountPath(`issue/${issueKey}?fields=comment,worklog`),
       headers: this.generateAuthHeader()
     });
   }
 
+  /**
+   * https://developer.atlassian.com/cloud/jira/platform/rest/v2/#api-rest-api-2-issue-issueIdOrKey-transitions-get
+   */
   getIssueTransitionHistory(issueKey: string): Promise<JiraGetIssueTransactionResponse> {
     return this.http.request({
       method: HttpMethod.GET,
@@ -75,6 +90,9 @@ export class JiraIntegrationApi {
     });
   }
 
+  /**
+   * https://developer.atlassian.com/cloud/jira/platform/rest/v2/#api-rest-api-2-issue-issueIdOrKey-transitions-post
+   */
   setIssueTransaction(issueKey: string, transactId: string): Promise<void> {
     return this.http.request({
       method: HttpMethod.POST,

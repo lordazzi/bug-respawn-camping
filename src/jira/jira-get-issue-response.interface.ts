@@ -4,37 +4,40 @@ export interface JiraGetIssueResponse {
   key: string;
   fields: {
     comment: {
-      self: string;
-      id: string;
-      author: {
+      maxResults: number;
+      startAt: number;
+      total: number;
+      comments: {
         self: string;
-        accountId: string;
-        displayName: string;
-        active: boolean;
-      };
-      body: {
-        type: string;
-        version: number;
-        content: {
-          type: string;
-          content: {
-            type: string;
-            text: string;
-          }[];
-        }[];
-      },
-      updateAuthor: {
-        self: string;
-        accountId: string;
-        displayName: string;
-        active: boolean;
-      },
-      created: string;
-      updated: string;
-      visibility: {
-        type: string;
-        value: string;
-      }
-    }[];
+        id: string;
+        author: {
+          active: boolean;
+          avatarUrls: {
+            [imageSize: string]: string | undefined
+          };
+          displayName: string;
+          emailAddress: string;
+          key: string;
+          name: string;
+          self: string;
+          timeZone: string;
+        };
+        body: string;
+        updateAuthor: {
+          active: boolean;
+          avatarUrls: {
+            [imageSize: string]: string | undefined
+          };
+          displayName: string;
+          emailAddress: string;
+          key: string;
+          name: string;
+          self: string;
+          timeZone: string;
+        };
+        created: string;
+        updated: string;
+      }[];
+    };
   };
 }

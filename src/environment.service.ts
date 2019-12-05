@@ -10,9 +10,6 @@ export class EnvironmentService {
    */
   defaultProjectKey = '';
 
-  /**
-   * TODO:
-   */
   maxCommentsInIssue = 30;
 
   /**
