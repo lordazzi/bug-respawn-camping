@@ -1,4 +1,6 @@
-# Bug Spawn Camping, for TypeScript / Angular applications
+#Bug Respawn Camping
+As a camper in fps game, this library will be camping in the software waiting the bug to respaw.
+It will work for TypeScript / Angular applications.
 
 [![npm version](https://badge.fury.io/js/bug-respawn-camping.svg)](https://badge.fury.io/js/bug-respawn-camping)
 [![Build Status](https://travis-ci.org/lordazzi/bug-respawn-camping.svg?branch=master)](https://travis-ci.org/lordazzi/bug-respawn-camping)
