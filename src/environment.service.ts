@@ -2,6 +2,8 @@ export class EnvironmentService {
 
   private static instance: EnvironmentService | null = null;
 
+  readonly SOFTWARE_IDENTIFIER = 'catch-by-respawn-camping';
+
   basicAuth: string | null = null;
   atlassianJiraServer: string | null = null;
 
@@ -55,25 +57,15 @@ export class EnvironmentService {
     };
 
   /**
-   * TODO:
+   * Configurations about when the software should stop interacting with jira
    */
   stopInteractWhen: {
-    criticalDays: {
-      day: number;
-      month: number;
-    }[][];
     maximumAmountOfIssuesReached: number | false;
   } = {
 
       /**
-       * Stop interacting with jira in critical day
+       * if it reach this number of registered issues
        */
-      criticalDays: [
-        [{ day: 25, month: 4 }, { day: 15, month: 5 }],
-        [{ day: 15, month: 11 }, { day: 1, month: 12 }],
-        [{ day: 15, month: 12 }, { day: 20, month: 1 }]
-      ],
-
       maximumAmountOfIssuesReached: 30
     };
 

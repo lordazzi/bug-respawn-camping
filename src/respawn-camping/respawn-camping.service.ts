@@ -13,8 +13,6 @@ export class RespawnCampingService {
 
   private static instance: RespawnCampingService | null = null;
 
-  private readonly SOFTWARE_IDENTIFIER = 'catch-by-respawn-camping';
-
   private objectUtil = new ObjectUtil();
   private stringUtil = new StringUtil();
   private jiraApi = new JiraIntegrationApi();
@@ -30,12 +28,13 @@ export class RespawnCampingService {
   }
 
   async registerRespawnedBug(normalizerName: string, error: ErrorNormalized): Promise<void> {
-    if (!this.interactionController.canInteract()) {
+    const canInteract = await this.interactionController.canInteract();
+    if (!canInteract) {
       return Promise.resolve();
     }
 
     const registrable = this.createRegistrableError(normalizerName, error);
-    const resultSet = await this.jiraApi.findIssueByLabel([this.SOFTWARE_IDENTIFIER, registrable.error.id]);
+    const resultSet = await this.jiraApi.findIssueByLabel([this.environment.SOFTWARE_IDENTIFIER, registrable.error.id], 1);
     const issueKey = this.getIssueKeyFromSearch(resultSet);
     if (issueKey) {
       const issueResultSet = await this.jiraApi.getIssue(issueKey);
@@ -101,7 +100,7 @@ export class RespawnCampingService {
     const clonedError = this.objectUtil.clone(error);
 
     clonedError.id = this.stringUtil.labelfy(`id-${normalizerName}-${clonedError.id}`);
-    clonedError.labels.push(this.SOFTWARE_IDENTIFIER);
+    clonedError.labels.push(this.environment.SOFTWARE_IDENTIFIER);
     clonedError.labels = clonedError.labels.map(label => this.stringUtil.labelfy(label));
     clonedError.labels.push(clonedError.id);
 

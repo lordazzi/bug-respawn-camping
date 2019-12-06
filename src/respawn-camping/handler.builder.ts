@@ -42,6 +42,11 @@ export class HandlerBuilder {
     return this;
   }
 
+  setMaximumAmountOfIssues(maxAmount: number | false): HandlerBuilder {
+    this.enviroment.stopInteractWhen.maximumAmountOfIssuesReached = maxAmount;
+    return this;
+  }
+
   basicAuth(basicAuth: string): HandlerBuilder {
     this.enviroment.basicAuth = basicAuth;
     return this;

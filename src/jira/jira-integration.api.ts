@@ -39,15 +39,16 @@ export class JiraIntegrationApi {
   /**
    * https://developer.atlassian.com/cloud/jira/platform/rest/v2/#api-rest-api-2-search-get
    */
-  findIssueByLabel(labels: string[], maxResults = 1): Promise<JiraSearchIssueResponse> {
+  findIssueByLabel(labels: string[], maxResults?: number): Promise<JiraSearchIssueResponse> {
     const labelsCondition = labels.map(label => 'labels = ' + label).join(' AND ');
+    const configuredMaxResults = maxResults ? `&maxResults=${maxResults}` : '';
     const jql =
       `project = ${this.environment.defaultProjectKey
       } AND issuetype = ${this.environment.bugTypeName
       } AND ${labelsCondition}`;
 
     const queryString = `?currentProjectId=${this.environment.defaultProjectKey}&jql=${
-      jql}&fields=summary,issuetype&maxResults=${maxResults}`;
+      jql}&fields=summary,issuetype${configuredMaxResults}`;
 
     return this.http.request({
       method: HttpMethod.GET,
