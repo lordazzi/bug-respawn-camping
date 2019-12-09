@@ -67,6 +67,4 @@ export class HttpService {
       xhr.setRequestHeader(key, String(newHeaders[key]));
     });
   }
-
-
 }
