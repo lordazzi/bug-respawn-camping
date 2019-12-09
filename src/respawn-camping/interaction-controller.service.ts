@@ -1,4 +1,5 @@
 import { JiraGetIssueResponse } from '../jira/jira-get-issue-response.interface';
+import { JiraIntegrationApi } from '../jira/jira-integration.api';
 import { EnvironmentService } from './../environment.service';
 
 export class InteractionControllerService {
@@ -6,6 +7,7 @@ export class InteractionControllerService {
   private static instance: InteractionControllerService | null = null;
 
   private environment = new EnvironmentService();
+  private jiraApi = new JiraIntegrationApi();
 
   constructor() {
     if (!InteractionControllerService.instance) {
@@ -15,7 +17,18 @@ export class InteractionControllerService {
     return InteractionControllerService.instance;
   }
 
-  canInteract(): boolean {
+  async canInteract(): Promise<boolean> {
+    const issues = await this.jiraApi.findIssueByLabel([this.environment.SOFTWARE_IDENTIFIER]);
+    const maximumAmountOfIssuesReached = this.environment.stopInteractWhen.maximumAmountOfIssuesReached;
+
+    if (maximumAmountOfIssuesReached !== false) {
+      const maxOfIssuesReached = issues.total >= this.environment.stopInteractWhen.maximumAmountOfIssuesReached;
+      if (maxOfIssuesReached) {
+        return false;
+      }
+    }
+
+
     return true;
   }
 
