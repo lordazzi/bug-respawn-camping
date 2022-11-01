@@ -44,7 +44,7 @@
     "@types/jasmine": "2.8.6",
     "coveralls": "3.0.1",
     "es6-module-loader": "0.17.11",
-    "gulp": "3.9.1",
+    "gulp": "4.0.2",
     "gulp-clean": "0.4.0",
     "gulp-concat": "2.6.1",
     "gulp-minify": "3.1.0",
